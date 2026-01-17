@@ -150,6 +150,8 @@ void clock_get_since_time(char *buffer, int buf_size, time_t timestamp);
 void clock_get_until_time(char *buffer, int buf_size, time_t timestamp,
                           int max_relative_hrs);
 
+void clock_get_until_time_as_mmss(char *buffer, int buf_size, time_t timestamp);
+
 //! Get a friendly "time to" out of a timestamp, without ever writing the real time
 //! @param buffer buffer to output the friendly time into
 //! @param buf_size size of the buffer

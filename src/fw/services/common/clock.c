@@ -921,6 +921,15 @@ void clock_get_until_time(char *buffer, int buf_size, time_t timestamp,
   prv_clock_get_relative_time_string(buffer, buf_size, timestamp, false, max_relative_hrs, true);
 }
 
+void clock_get_until_time_as_mmss(char *buffer, int buf_size, time_t timestamp) {
+  time_t difference = timestamp - rtc_get_time();
+
+  const int minutes = difference / SECONDS_PER_MINUTE;
+  const int seconds = difference % SECONDS_PER_MINUTE;
+
+  snprintf(buffer, buf_size, "%d:%02d", minutes, seconds);
+}
+
 void clock_get_until_time_capitalized(char *buffer, int buf_size, time_t timestamp,
                                       int max_relative_hrs) {
   prv_clock_get_relative_time_string(buffer, buf_size, timestamp, true, max_relative_hrs, true);

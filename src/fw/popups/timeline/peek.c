@@ -105,18 +105,12 @@ static void prv_redraw(void *PBL_UNUSED data) {
   layer_mark_dirty(&peek->layout_layer);
 }
 
-static void prv_cron_callback(CronJob *job, void *PBL_UNUSED data) {
-  launcher_task_add_callback(prv_redraw, NULL);
-  cron_job_schedule(job);
-}
+static AppTimer *s_timeline_peek_timer = NULL;
 
-static CronJob s_timeline_peek_job = {
-  .minute = CRON_MINUTE_ANY,
-  .hour = CRON_HOUR_ANY,
-  .mday = CRON_MDAY_ANY,
-  .month = CRON_MONTH_ANY,
-  .cb = prv_cron_callback,
-};
+static void prv_timer_callback(void *PBL_UNUSED data) {
+  launcher_task_add_callback(prv_redraw, NULL);
+  s_timeline_peek_timer = app_timer_register(1000, prv_timer_callback, NULL);
+}
 
 static void prv_destroy_layout(void) {
   TimelinePeek *peek = &s_peek;
@@ -436,9 +430,11 @@ static void prv_set_visible(bool visible, bool animated) {
 #if CAPABILITY_HAS_TIMELINE_PEEK
   TimelinePeek *peek = &s_peek;
   if (!peek->started && visible) {
-    cron_job_schedule(&s_timeline_peek_job);
+    s_timeline_peek_timer = app_timer_register(1000, prv_timer_callback, NULL);
   } else {
-    cron_job_unschedule(&s_timeline_peek_job);
+    if (s_timeline_peek_timer != NULL) {
+      app_timer_cancel(s_timeline_peek_timer);
+    }
   }
   prv_transition_frame(peek, visible, animated);
 #endif

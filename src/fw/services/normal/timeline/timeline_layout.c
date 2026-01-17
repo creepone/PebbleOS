@@ -476,8 +476,7 @@ static void prv_peek_time_text_update(const LayoutLayer *layout_ref,
                                       char *buffer, bool render) {
   const TimelineLayout *layout = (TimelineLayout *)layout_ref;
   if (rtc_get_time() < layout->info->timestamp) {
-    clock_get_until_time(buffer, config->buffer_size, layout->info->timestamp,
-                         24 /* max_relative_hrs */);
+    clock_get_until_time_as_mmss(buffer, config->buffer_size, layout->info->timestamp);
   } else {
     strncpy(buffer, prv_get_secondary_text(layout), config->buffer_size);
     buffer[config->buffer_size - 1] = '\0';
